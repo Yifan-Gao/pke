@@ -16,6 +16,9 @@ for lang in ['de', 'es', 'fr', 'it']:
 
     df_file = os.path.join(data_path, "tfidf", f'{lang}.df_counts.csv.gz')
 
+    saving_path = os.path.join(data_path, 'kpminer')
+    os.makedirs(saving_path, exist_ok=True)
+
     spacy_model = spacy.load(str2spacy(lang), disable=['ner', 'textcat', 'parser'])
     if int(spacy.__version__.split('.')[0]) < 3:
         sentencizer = spacy_model.create_pipe('sentencizer')
@@ -23,8 +26,8 @@ for lang in ['de', 'es', 'fr', 'it']:
         sentencizer = 'sentencizer'
     spacy_model.add_pipe(sentencizer)
 
-    # 1. create a TfIdf extractor.
-    extractor = pke.unsupervised.TfIdf()
+    # 1. create a KPMiner extractor.
+    extractor = pke.unsupervised.KPMiner()
 
     predictions = {}
 
@@ -35,16 +38,24 @@ for lang in ['de', 'es', 'fr', 'it']:
                                 normalization=None,
                                 spacy_model=spacy_model)
 
-        # 3. select {1-3}-grams not containing punctuation marks as candidates.
-        extractor.candidate_selection(n=3, stoplist=list(string.punctuation))
+        # 3. select {1-5}-grams that do not contain punctuation marks or
+        #    stopwords as keyphrase candidates. Set the least allowable seen
+        #    frequency to 5 and the number of words after which candidates are
+        #    filtered out to 200.
+        lasf = 5
+        cutoff = 200
+        extractor.candidate_selection(lasf=lasf, cutoff=cutoff)
 
         # 4. weight the candidates using a `tf` x `idf`
         df = pke.load_document_frequency_file(input_file=df_file)
-        extractor.candidate_weighting(df=df)
+        alpha = 2.3
+        sigma = 3.0
+        extractor.candidate_weighting(df=df, alpha=alpha, sigma=sigma)
 
         # 5. get the 10-highest scored candidates as keyphrases
         keyphrases = extractor.get_n_best(n=200)
         predictions[input_file.split('.')[-2]] = [k[0] for k in keyphrases]
 
-    with open(os.path.join(data_path, 'tfidf', f'predictions.{lang}.json'), 'w') as f:
+    with open(os.path.join(saving_path, f'predictions.{lang}.json'), 'w') as f:
         json.dump(predictions, f)
+

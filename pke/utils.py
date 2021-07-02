@@ -70,7 +70,8 @@ def compute_document_frequency(input_dir,
                                delimiter='\t',
                                n=3,
                                max_length=None,
-                               encoding=None):
+                               encoding=None,
+                               spacy_model=None):
     """Compute the n-gram document frequencies from a set of input documents. An
     extra row is added to the output file for specifying the number of
     documents from which the document frequencies were computed
@@ -111,7 +112,8 @@ def compute_document_frequency(input_dir,
                           language=language,
                           normalization=normalization,
                           max_length=max_length,
-                          encoding=encoding)
+                          encoding=encoding,
+                          spacy_model=spacy_model)
 
         # candidate selection
         doc.ngram_selection(n=n)
@@ -160,7 +162,8 @@ def train_supervised_model(input_dir,
                            normalize_reference=False,
                            leave_one_out=False,
                            encoding=None,
-                           ref_encoding=None):
+                           ref_encoding=None,
+                           spacy_model=None):
     """Build a supervised keyphrase extraction model from a set of documents and
     a reference file.
 
@@ -217,7 +220,8 @@ def train_supervised_model(input_dir,
         model.load_document(input=input_file,
                             language=language,
                             normalization=normalization,
-                            encoding=encoding)
+                            encoding=encoding,
+                            spacy_model=spacy_model)
 
         # candidate selection
         model.candidate_selection()
@@ -350,7 +354,8 @@ def compute_lda_model(input_dir,
                       language="en",
                       normalization="stemming",
                       max_length=None,
-                      encoding=None):
+                      encoding=None,
+                      spacy_model=None):
     """Compute a LDA model from a collection of documents. Latent Dirichlet
     Allocation is computed using sklearn module.
 
@@ -383,7 +388,8 @@ def compute_lda_model(input_dir,
                           language=language,
                           normalization=normalization,
                           max_length=max_length,
-                          encoding=encoding)
+                          encoding=encoding,
+                          spacy_model=spacy_model)
 
         # container for current document
         text = []

@@ -2,7 +2,7 @@ import logging
 import sys
 from string import punctuation
 import os
-from pke import compute_document_frequency
+from pke import compute_lda_model
 from pke.readers import str2spacy
 import spacy
 
@@ -21,10 +21,12 @@ data_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_dat
 for lang in ['de', 'es', 'fr', 'it']:
     # path to the collection of documents
     input_dir = os.path.join(data_path, 'docs_train', f'{lang}')
-    
+
     # path to the df weights dictionary, saved as a gzipped csv file
-    output_file = os.path.join(data_path, f'{lang}.df_counts.csv.gz')
-    
+    saving_path = data_path.replace('tfidf', 'lda')
+    os.makedirs(saving_path, exist_ok=True)
+    output_file = os.path.join(saving_path, f'{lang}.lda.csv.gz')
+
     # stoplist are punctuation marks
     stoplist = list(punctuation)
     stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
@@ -37,12 +39,11 @@ for lang in ['de', 'es', 'fr', 'it']:
     spacy_model.add_pipe(sentencizer)
 
     # compute idf weights
-    compute_document_frequency(input_dir=input_dir,
-                               output_file=output_file,
-                               extension='txt', # input file extension
-                               language=lang, # language of the input files
-                               normalization="stemming", # use porter stemmer
-                               stoplist=stoplist,  # stoplist
-                               delimiter='\t',  # tab separated output
-                               n=3,  # compute n-grams up to 5-grams
-                               spacy_model=spacy_model)
+    compute_lda_model(input_dir=input_dir,
+                      output_file=output_file,
+                      extension='txt',
+                      language=lang,
+                      normalization="stemming",
+                      spacy_model=spacy_model)
+
+
