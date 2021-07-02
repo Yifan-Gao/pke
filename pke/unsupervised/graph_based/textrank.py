@@ -161,8 +161,8 @@ class TextRank(LoadFile):
         if top_percent is not None:
 
             # warn user as this is not the pke way of doing it
-            logging.warning("Candidates are generated using {}-top".format(
-                            top_percent))
+            # logging.warning("Candidates are generated using {}-top".format(
+            #                 top_percent))
 
             # computing the number of top keywords
             nb_nodes = self.graph.number_of_nodes()

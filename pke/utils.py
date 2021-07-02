@@ -26,6 +26,7 @@ from pke.base import LoadFile, get_stopwords, get_stemmer_func
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 
+from tqdm import tqdm
 
 def load_document_frequency_file(input_file,
                                  delimiter='\t'):
@@ -98,7 +99,7 @@ def compute_document_frequency(input_dir,
     nb_documents = 0
 
     # loop through the documents
-    for input_file in glob.iglob(input_dir + os.sep + '*.' + extension):
+    for input_file in tqdm(glob.iglob(input_dir + os.sep + '*.' + extension)):
 
         #logging.info('reading file {}'.format(input_file))
 

@@ -162,8 +162,12 @@ class LoadFile(object):
             doc.is_corenlp_file = True
         elif is_file_path(input):
             path = input
-            with open(path, encoding=kwargs.get('encoding', 'utf-8')) as f:
-                input = f.read()
+            try:
+                with open(path, encoding='utf-8') as f:
+                    input = f.read()
+            except:
+                with open(path) as f:
+                    input = f.read()
             parser = RawTextReader(language=language)
             doc = parser.read(text=input, path=path, **kwargs)
         elif isinstance(input, str):
