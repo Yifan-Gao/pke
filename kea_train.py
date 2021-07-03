@@ -47,4 +47,5 @@ for lang in ['de', 'es', 'fr', 'it']:
                                normalization="stemming",
                                df=df_counts,
                                model=pke.supervised.Kea(),
-                               spacy_model=spacy_model)
+                               spacy_model=spacy_model,
+                               ref_encoding='utf-8')

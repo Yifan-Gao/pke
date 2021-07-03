@@ -26,12 +26,12 @@ for lang in ['de', 'es', 'fr', 'it']:
         sentencizer = 'sentencizer'
     spacy_model.add_pipe(sentencizer)
 
-    # 1. create a KPMiner extractor.
-    extractor = pke.unsupervised.KPMiner()
-
     predictions = {}
 
     for input_file in tqdm(glob.iglob(input_dir + os.sep + '*.' + extension)):
+        # 1. create a KPMiner extractor.
+        extractor = pke.unsupervised.KPMiner()
+
         # 2. load the content of the document.
         extractor.load_document(input=input_file,
                                 language=lang,

@@ -27,12 +27,12 @@ for lang in ['de', 'es', 'fr', 'it']:
         sentencizer = 'sentencizer'
     spacy_model.add_pipe(sentencizer)
 
-    # 1. create a YAKE extractor.
-    extractor = pke.unsupervised.YAKE()
-
     predictions = {}
 
     for input_file in tqdm(glob.iglob(input_dir + os.sep + '*.' + extension)):
+        # 1. create a YAKE extractor.
+        extractor = pke.unsupervised.YAKE()
+
         # 2. load the content of the document.
         extractor.load_document(input=input_file,
                                 language=lang,

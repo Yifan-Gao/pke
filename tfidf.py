@@ -23,12 +23,12 @@ for lang in ['de', 'es', 'fr', 'it']:
         sentencizer = 'sentencizer'
     spacy_model.add_pipe(sentencizer)
 
-    # 1. create a TfIdf extractor.
-    extractor = pke.unsupervised.TfIdf()
-
     predictions = {}
 
     for input_file in tqdm(glob.iglob(input_dir + os.sep + '*.' + extension)):
+        # 1. create a TfIdf extractor.
+        extractor = pke.unsupervised.TfIdf()
+
         # 2. load the content of the document.
         extractor.load_document(input=input_file,
                                 language=lang,

@@ -208,7 +208,7 @@ def train_supervised_model(input_dir,
     # get the input files from the input directory
     for input_file in glob.iglob(input_dir + os.sep + '*.' + extension):
 
-        logging.info('reading file {}'.format(input_file))
+        # logging.info('reading file {}'.format(input_file))
 
         # get the document id from file name
         doc_id = '.'.join(os.path.basename(input_file).split('.')[0:-1])
@@ -291,6 +291,19 @@ def load_references(input_file,
 
     references = defaultdict(list)
 
+    # with open(input_file, encoding='utf-8') as f:
+    #     lines = f.read().splitlines()
+    # for line in lines:
+    #     cols = line.strip().split(sep_doc_id)
+    #     doc_id = cols[0].strip()
+    #     keyphrases = cols[1].strip().split(sep_ref_keyphrases)
+    #     for v in keyphrases:
+    #         if '+' in v:
+    #             for s in v.split('+'):
+    #                 references[doc_id].append(s)
+    #         else:
+    #             references[doc_id].append(v)
+
     # open input file
     with codecs.open(input_file, 'r', encoding) as f:
 
@@ -314,16 +327,16 @@ def load_references(input_file,
                     else:
                         references[doc_id].append(v)
 
-        # normalize reference if needed
-        if normalize_reference:
+    # normalize reference if needed
+    if normalize_reference:
 
-            # initialize stemmer
-            stem = get_stemmer_func(language)
+        # initialize stemmer
+        stem = get_stemmer_func(language)
 
-            for doc_id in references:
-                for i, keyphrase in enumerate(references[doc_id]):
-                    stems = [stem(w) for w in keyphrase.split()]
-                    references[doc_id][i] = ' '.join(stems)
+        for doc_id in references:
+            for i, keyphrase in enumerate(references[doc_id]):
+                stems = [stem(w) for w in keyphrase.split()]
+                references[doc_id][i] = ' '.join(stems)
 
     return references
 
@@ -378,7 +391,7 @@ def compute_lda_model(input_dir,
     # loop throught the documents
     for input_file in glob.iglob(input_dir + os.sep + '*.' + extension):
 
-        logging.info('reading file {}'.format(input_file))
+        # logging.info('reading file {}'.format(input_file))
 
         # initialize load file object
         doc = LoadFile()
