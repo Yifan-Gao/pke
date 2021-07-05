@@ -61,7 +61,7 @@ def _compute(predictions, references):
 
 # pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/textrank/predictions.{}.json'
 # pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/topicrank/predictions.{}.json'
-pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/topicalpagerank/predictions.{}.json'
+# pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/topicalpagerank/predictions.{}.json'
 # pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/singlerank/predictions.{}.json'
 # pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/positionrank/predictions.{}.json'
 # pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/multipartiterank/predictions.{}.json'
@@ -70,19 +70,39 @@ pred_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_dat
 
 gold_path = '/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/{}/mix.test.json'
 
-for topk in [3,5,8,10,15,20,30,50,100,200]:
-    print(topk)
-    predictions, references = [], []
-    for lang in ['de', 'it', 'fr', 'es']:
-        with open(pred_path.format(lang)) as f:
-            pred = json.load(f)
-        with open(gold_path.format(lang)) as f:
-            gold = [json.loads(line) for line in f]
-        asin2pred, asin2gold = {}, {}
-        for idx, ex in enumerate(gold):
-            asin2gold[ex['asin']] = ex['keywords'].split(';')
-            asin2pred[ex['asin']] = pred[str(idx)][:topk]
-        for asin in asin2gold:
-            predictions.append(asin2pred[asin])
-            references.append(asin2gold[asin])
-    print(_compute(predictions, references))
+for pred_path in ['/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/tfidf/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/kpminer/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/yake/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/textrank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/topicrank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/topicalpagerank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/singlerank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/positionrank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/multipartiterank/predictions.{}.json',
+'/home/ec2-user/quic-efs/user/yifangao/multilingual_dataset/full_data/processed/numkps5-30-partially-aligned-from-p2/percent-2/baseline/kea/predictions.{}.json',
+]:
+
+
+    all_preds = {}
+    # for topk in [3,5,8,10,15,20,30,50,100,200]:
+    for topk in [3,]:
+        print(topk)
+        predictions, references = [], []
+        for lang in ['de', 'it', 'fr', 'es']:
+            with open(pred_path.format(lang)) as f:
+                pred = json.load(f)
+            with open(gold_path.format(lang)) as f:
+                gold = [json.loads(line) for line in f]
+            asin2pred, asin2gold = {}, {}
+            for idx, ex in enumerate(gold):
+                asin2gold[ex['asin']] = ex['keywords'].split(';')
+                asin2pred[ex['asin']] = pred[str(idx)][:topk]
+                all_preds[ex['asin']] = pred[str(idx)]
+            for asin in asin2gold:
+                predictions.append(asin2pred[asin])
+                references.append(asin2gold[asin])
+        print(_compute(predictions, references))
+
+    with open(pred_path.format('all'), 'w') as f:
+        json.dump(all_preds, f)
+
